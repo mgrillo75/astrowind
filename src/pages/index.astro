@@ -13,7 +13,8 @@ import Stats from '~/components/widgets/Stats.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 
 const metadata = {
-  title: 'AstroWind — Free template for creating websites with Astro + Tailwind CSS',
+  title: 'QuanTempra — LLM Consulting for Industrial Automation',
+  description: 'Consultants specializing in LLM technology for process control, factory automation, manufacturing, and utilities.',
   ignoreTitleTemplate: true,
 };
 ---
@@ -22,37 +23,139 @@ const metadata = {
   <!-- Hero Widget ******************* -->
 
   <Hero
+    id="hero-vanta"
+    tagline="Automate Industrial Workflows"
     actions={[
       {
         variant: 'primary',
-        text: 'Get template',
-        href: 'https://github.com/arthelokyo/astrowind',
-        target: '_blank',
-        icon: 'tabler:download',
+        text: 'Book a Consultation',
+        href: '/contact',
+        icon: 'tabler:calendar-event',
       },
-      { text: 'Learn more', href: '#features' },
     ]}
-    image={{ src: '~/assets/images/hero-image.png', alt: 'AstroWind Hero Image' }}
+    image={{ src: '~/assets/images/hero-image.png', alt: 'Industrial Automation LLM Illustration' }}
+    alignment="left"
   >
     <Fragment slot="title">
-      Free template for <span class="hidden xl:inline">creating websites with</span>
-      <span class="text-accent dark:text-white"> Astro 5.0</span> + Tailwind CSS
+      AI-Driven Expertise for <span class="text-orange-400">Industrial Automation</span>
     </Fragment>
 
     <Fragment slot="subtitle">
       <span class="hidden sm:inline">
-        <span class="font-semibold">AstroWind</span> is a free, customizable and production-ready template for Astro 5.0
-        + Tailwind CSS.</span
-      >
-      <span class="block mb-1 sm:hidden font-bold text-blue-600">AstroWind: Production-ready.</span>
-      Suitable for Startups, Small Business, SaaS websites, Professional Portfolios, Marketing websites, Landing Pages &
-      Blogs.
+        QuanTempra aligns power systems, controls, and advanced LLM tooling to modernize process control, factory
+        automation, manufacturing, and utilities operations.
+      </span>
+      <span class="block sm:hidden font-semibold text-white">LLM experts for industrial automation.</span>
+      <span class="block">
+        We coach teams, architect OT-ready LLM integrations, accelerate troubleshooting and documentation, deploy agent
+        frameworks, and connect edge LLMs with PLC/SCADA KPIs - delivering measurable ROI across your plants.
+      </span>
     </Fragment>
   </Hero>
 
-  <!-- Note Widget ******************* -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.net.min.js" defer></script>
+  <script type="module" is:inline>
+    let vantaEffect;
+    let themeObserver;
 
-  <Note title="Philosophy:" description="Simplicity, Best Practices and High Performance" />
+    const parseColorToHex = (colorString = '') => {
+      const color = colorString.trim();
+
+      if (!color) return 0x000000;
+
+      if (color.startsWith('#')) {
+        const hex = color.length === 4 ? color.replace(/#(.)(.)(.)/, '#$1$1$2$2$3$3') : color;
+        return Number.parseInt(hex.replace('#', ''), 16) || 0x000000;
+      }
+
+      if (color.startsWith('rgb')) {
+        const values = color
+          .replace(/rgba?\(|\)/g, '')
+          .split(',')
+          .map((value) => Number.parseFloat(value));
+        const [r = 0, g = 0, b = 0] = values;
+        return ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff);
+      }
+
+      return 0x000000;
+    };
+
+    const createVanta = () => {
+      const hero = document.querySelector('#hero-vanta');
+
+      if (!hero || !window.VANTA?.NET) {
+        return;
+      }
+
+      if (vantaEffect?.destroy) {
+        vantaEffect.destroy();
+      }
+
+      const { backgroundColor } = getComputedStyle(hero);
+
+      vantaEffect = window.VANTA.NET({
+        el: hero,
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.0,
+        minWidth: 200.0,
+        scale: 1.0,
+        scaleMobile: 1.0,
+        color: 0xdc5823,
+        backgroundColor: parseColorToHex(backgroundColor),
+        points: 8.0,
+        maxDistance: 20.0,
+        spacing: 17.0,
+        showDots: true,
+      });
+    };
+
+    const observeThemeChanges = () => {
+      if (themeObserver) {
+        return;
+      }
+
+      const html = document.documentElement;
+
+      themeObserver = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            createVanta();
+            break;
+          }
+        }
+      });
+
+      themeObserver.observe(html, { attributes: true });
+    };
+
+    const ensureVanta = () => {
+      if (window.VANTA?.NET) {
+        createVanta();
+        observeThemeChanges();
+      } else {
+        setTimeout(ensureVanta, 100);
+      }
+    };
+
+    if (document.readyState === 'complete') {
+      ensureVanta();
+    } else {
+      window.addEventListener('load', ensureVanta, { once: true });
+    }
+
+    if (import.meta.hot) {
+      import.meta.hot.dispose(() => {
+        window.removeEventListener('load', ensureVanta);
+        themeObserver?.disconnect();
+        if (vantaEffect?.destroy) {
+          vantaEffect.destroy();
+        }
+      });
+    }
+  </script>
 
   <!-- Features Widget *************** -->
 
